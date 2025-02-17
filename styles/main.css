@@ -1,0 +1,30 @@
+.timer-container {
+    min-height: 100vh;
+    transition: background-color 1s ease;
+}
+
+.timer-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.timer-display {
+    font-size: clamp(4rem, 25vw, 30rem);
+    line-height: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.reset-link {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.reset-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
