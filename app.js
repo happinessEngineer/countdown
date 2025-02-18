@@ -83,7 +83,7 @@ function App() {
             style={{ backgroundColor }}
             data-name="timer-container"
         >
-            <div className="w-full max-w-md mx-auto px-4 text-center">
+            <div className={`w-full ${!isRunning ? 'max-w-md' : ''} mx-auto px-4 text-center`}>
                 {!isRunning ? (
                     <TimerInput onStart={startTimer} />
                 ) : (
@@ -93,6 +93,9 @@ function App() {
                         isBlinking={isCountingUp}
                     />
                 )}
+                <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full pb-5">
+                    <Weather />
+                </div>
             </div>
             {isRunning && <ResetLink onReset={resetTimer} />}
         </div>
