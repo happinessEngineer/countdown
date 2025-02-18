@@ -3,6 +3,7 @@ function App() {
     const [time, setTime] = React.useState({ minutes: 0, seconds: 0 });
     const [blink, setBlink] = React.useState(false);
     const [initialTotalSeconds, setInitialTotalSeconds] = React.useState(0);
+    const [isCountingUp, setIsCountingUp] = React.useState(false); // Track counting direction
     
     const startTimer = (inputMinutes) => {
         try {
@@ -10,6 +11,7 @@ function App() {
             setInitialTotalSeconds(inputMinutes * 60);
             setIsRunning(true);
             setBlink(false); // Reset blink state when starting the timer
+            setIsCountingUp(false); // Reset counting direction to down
         } catch (error) {
             reportError(error);
         }
@@ -21,10 +23,13 @@ function App() {
             setTime({ minutes: 0, seconds: 0 });
             setInitialTotalSeconds(0);
             setBlink(false); // Reset blink state on reset
+            setIsCountingUp(false); // Reset counting direction to down
         } catch (error) {
             reportError(error);
         }
     };
+
+    const hornSound = new Audio('car-horn-vintage.mp3'); // Load the horn sound
 
     React.useEffect(() => {
         let intervalId;
@@ -34,12 +39,22 @@ function App() {
                 try {
                     setTime(prevTime => {
                         let { minutes, seconds } = prevTime;
-                        if (seconds === 0) {
-                            if (minutes === 0) {
-                                clearInterval(intervalId); // Cancel the interval when time reaches 0
-                                setBlink(true); // Start blinking when the timer reaches 0
-                                return { minutes: 0, seconds: 0 };
+                        if (isCountingUp) {
+                            if ((minutes * 60 + seconds) % 300 === 0) {
+                                hornSound.play();
                             }
+                            if (seconds === 59) {
+                                return { minutes: minutes + 1, seconds: 0 };
+                            }
+                            // Count up indefinitely
+                            return { minutes: minutes, seconds: seconds + 1 };
+                        }
+                        if (minutes === 0 && seconds === 0) {
+                            // hornSound.play(); // Play horn sound when timer reaches 0
+                            setIsCountingUp(true); // Change to counting up
+                            return { minutes: 0, seconds: 0 };
+                        }
+                        if (seconds === 0) {
                             return { minutes: minutes - 1, seconds: 59 }; // Reset seconds to 59 when minutes decrease
                         }
                         return { minutes, seconds: seconds - 1 };
@@ -55,11 +70,11 @@ function App() {
                 clearInterval(intervalId);
             }
         };
-    }, [isRunning]);
+    }, [isRunning, isCountingUp]);
 
     const currentTotalSeconds = calculateTotalSeconds(time.minutes, time.seconds);
     const backgroundColor = isRunning ? 
-        calculateBackgroundColor(initialTotalSeconds, currentTotalSeconds) : 
+        calculateBackgroundColor(initialTotalSeconds, currentTotalSeconds, isCountingUp) : 
         'rgb(34, 197, 94)'; // Initial green color
 
     return (
@@ -75,7 +90,7 @@ function App() {
                     <TimerDisplay 
                         minutes={time.minutes} 
                         seconds={time.seconds}
-                        isBlinking={blink} // Use blink state to control display
+                        isBlinking={isCountingUp}
                     />
                 )}
             </div>

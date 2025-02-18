@@ -1,6 +1,6 @@
-function calculateBackgroundColor(initialTotalSeconds, currentTotalSeconds) {
+function calculateBackgroundColor(initialTotalSeconds, currentTotalSeconds, isCountingUp) {
     try {
-        if (currentTotalSeconds <= 0) return 'rgb(239, 68, 68)'; // red-500
+        if (currentTotalSeconds <= 0 || isCountingUp) return 'rgb(239, 68, 68)'; // red-500
         
         const progress = currentTotalSeconds / initialTotalSeconds;
         const red = Math.round(239 - (progress * (239 - 34)));
